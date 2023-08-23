@@ -59,9 +59,10 @@ export default class HomePage extends Component {
                             isResturantSelected: false,
                             selectedResturantName: ""
                         });
+                        this.setCookie("viewKey", reply.data.viewKey, 10);
                         var viewUrl = this.generateLink(reply.data.viewKey);
                         this.copyTextToClipboard(viewUrl);
-                        window.open(viewUrl,"_blank");
+                        //window.open(viewUrl, "_blank");
 
                     }
                     console.log(reply.data);
@@ -84,6 +85,7 @@ export default class HomePage extends Component {
                         isActive: false,
                         isResturantSelected: true
                     });
+                    this.setCookie("viewKey", 0, -1);
 
                     console.log(reply.data);
                 });
@@ -120,6 +122,15 @@ export default class HomePage extends Component {
     }
 
 
+    // Save to cookie
+    setCookie(cname, cvalue, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+
 
 
     render() {
@@ -129,31 +140,38 @@ export default class HomePage extends Component {
 
         return (
             <div className="container-fluid">
-
-                <div className="form-box">
-                    <div className="row mt-5 mb-5">
-                        <div className="col-md-6 pl-1 pr-1 mb-2">
-                            <input className="form-control" type="text" id="name" placeholder="Your Name" onChange={this.onChangeName} value={name} />
-                        </div>
-                        <div className="col-md-6 pl-1 pr-1 mb-2">
-                            <button className="form-control btn btn-outline-primary" onClick={this.onClickStartSession}>Start</button>
-                        </div>
-                    </div>
-
-                </div>
-
                 {isActive ? (
-                    <div className="form-box">
-                        <div className="input-group mb-3">
-                            <span className="input-group-text" id="basic-addon1">User link</span>
-                            <input className="form-control" id="viewKey" type="text" readOnly onChange={this.onChangeViewKey} value={this.generateLink(viewKey, 0)} />
-                        </div>
-                        <div className="input-group mb-3">
-                            <button className="form-control btn btn-outline-primary" onClick={this.onClickEndSession}>End</button>
+                    <div>
+                        <Router>
+                            <Switch>
+                                <Route exact path='/' component={ViewPage} />
+                            </Switch>
+                        </Router>
+
+                        <div className="form-box">
+                            <div className="input-group mb-3">
+                                <span className="input-group-text" id="basic-addon1">User link</span>
+                                <input className="form-control" id="viewKey" type="text" readOnly onChange={this.onChangeViewKey} value={this.generateLink(viewKey, 0)} />
+                            </div>
+                            <div className="input-group mb-3">
+                                <button className="form-control btn btn-outline-danger" onClick={this.onClickEndSession}>End</button>
+                            </div>
                         </div>
                     </div>
 
-                ) : ("")
+                ) : (
+                    <div className="form-box">
+                        <div className="row mt-5 mb-5">
+                            <div className="col-md-6 pl-1 pr-1 mb-2">
+                                <input className="form-control" type="text" id="name" placeholder="Your Name" onChange={this.onChangeName} value={name} />
+                            </div>
+                            <div className="col-md-6 pl-1 pr-1 mb-2">
+                                <button className="form-control btn btn-outline-success" onClick={this.onClickStartSession}>Start</button>
+                            </div>
+                        </div>
+
+                    </div>
+                )
                 }
                 {isResturantSelected ? (
                     <div>

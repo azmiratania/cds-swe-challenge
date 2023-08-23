@@ -39,7 +39,10 @@ export default class ViewPage extends Component {
         var tempInterval = setInterval(() => {
             this.viewResturants();
         }, 2000);
-        this.setState({ interval: tempInterval });
+        this.setState({
+            interval: tempInterval,
+            username: this.getCookie("username")
+        });
     }
 
     viewResturants() {
@@ -58,7 +61,11 @@ export default class ViewPage extends Component {
     }
 
     updateViewKey() {
-        var key = query.get("key");
+        var key;
+        key = this.getCookie("viewKey");
+        if (key == null || key.length < 3) {
+            key = query.get("key");
+        }
         this.setState({ viewKey: key });
         console.log(key);
         return key;
@@ -67,9 +74,14 @@ export default class ViewPage extends Component {
     onClickSubmit() {
 
         var key = this.updateViewKey();
-        var cookieKey = this.getCookie("viewKey");
+        var submitted = this.getCookie("submitted");
 
-        if (cookieKey === key) {
+        // Handle null cases
+        if (submitted === null) {
+            submitted = "";
+        }
+
+        if (submitted.includes(key)) {
             alert("Already submitted.");
             return;
         }
@@ -82,6 +94,8 @@ export default class ViewPage extends Component {
                     console.log(reply.data);
                     this.setCookie("viewKey", key, 10);
                     this.setCookie("username", this.state.username, 10);
+                    submitted += " " + key;
+                    this.setCookie("submitted", submitted, 10);
                 });
 
         };
@@ -133,9 +147,9 @@ export default class ViewPage extends Component {
         return (
             <div className="container-fluid">
                 {isSessionActive ? (
-                    <div>
+                    <div className="mb-5 mt-5">
                         <div className="form-box">
-                            <div className="row mt-5 mb-5">
+                            <div className="row">
                                 <div className="col-md-4 pl-1 pr-1 mb-2">
                                     <input className="form-control" type="text" id="username" placeholder="Your Name" onChange={this.onChangeUsername} value={username} />
                                 </div>
@@ -153,7 +167,7 @@ export default class ViewPage extends Component {
                         </div>
                     </div>
                 ) : (
-                    <div className="form-box input-group">
+                    <div className="form-box input-group mb-5 mt-5">
                         <span className="input-group-text">Selected Resturant : </span>
                         <div className="form-control" >{selectedResturant}</div>
                     </div>

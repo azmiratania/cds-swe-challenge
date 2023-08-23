@@ -1,0 +1,25 @@
+version: "3"
+services:
+  frontend_react:
+    container_name: frontend
+    restart: unless-stopped
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+      args:
+        environment: dev
+        status: stable
+    ports:
+      - 3000:3000
+
+  backend:
+    container_name: backend
+    restart: unless-stopped
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+      args:
+        environment: dev
+        status: stable
+    ports:
+      - 8080:8080
