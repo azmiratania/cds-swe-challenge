@@ -154,7 +154,7 @@ export default class HomePage extends Component {
                                 <input className="form-control" id="viewKey" type="text" readOnly onChange={this.onChangeViewKey} value={this.generateLink(viewKey, 0)} />
                             </div>
                             <div className="input-group mb-3">
-                                <button className="form-control btn btn-outline-danger" onClick={this.onClickEndSession}>End</button>
+                                <button className="form-control btn btn-danger" onClick={this.onClickEndSession}>End</button>
                             </div>
                         </div>
                     </div>
@@ -166,7 +166,7 @@ export default class HomePage extends Component {
                                 <input className="form-control" type="text" id="name" placeholder="Your Name" onChange={this.onChangeName} value={name} />
                             </div>
                             <div className="col-md-6 pl-1 pr-1 mb-2">
-                                <button className="form-control btn btn-outline-success" onClick={this.onClickStartSession}>Start</button>
+                                <button className="form-control btn btn-success" onClick={this.onClickStartSession}>Start</button>
                             </div>
                         </div>
 

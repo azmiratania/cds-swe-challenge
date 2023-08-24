@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -57,20 +58,29 @@ public class ApiController {
 	public String submitResturant(@PathVariable("viewKey") String viewKey,
 			@ModelAttribute("Resturant") Resturant resturantDto) {
 
-		if (!resturantDto.getName().isEmpty()) {
-			Resturant resturant = new Resturant();
-			resturant.setName(resturantDto.getName());
-			resturant.setUsername(resturantDto.getUsername());
-			resturantService.save(resturant);
+		try {
 
-			Session session = sessionService.getByViewKey(viewKey);
+			String resturantName = resturantDto.getName();
+			Boolean validateResturantName = resturantName.matches("^[A-Za-z0-9 \\.\\-\\&]*$");
 
-			if (session != null && session.isActive()) {
-				session.addResturant(resturant);
-				sessionService.save(session);
-				return "OK";
+			if (!resturantName.isEmpty() && resturantName.length() < 20 && validateResturantName) {
+				Resturant resturant = new Resturant();
+				resturant.setName(resturantDto.getName());
+				resturant.setUsername(resturantDto.getUsername());
+				resturantService.save(resturant);
+
+				Session session = sessionService.getByViewKey(viewKey);
+
+				if (session != null && session.isActive()) {
+					session.addResturant(resturant);
+					sessionService.save(session);
+					return "OK";
+				}
 			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
+
 		return "FAIL";
 	}
 
@@ -88,7 +98,6 @@ public class ApiController {
 			}
 			resturantDto.setIsSessionActive(session.isActive());
 			Collection<Resturant> resturants = session.getResturant();
-			
 
 			for (Resturant resturant : resturants) {
 				resturantDto.addResturant(resturant.getName());

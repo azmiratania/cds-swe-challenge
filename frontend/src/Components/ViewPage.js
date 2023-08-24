@@ -91,11 +91,16 @@ export default class ViewPage extends Component {
 
             ApiService.submitResturant(key, postData)
                 .then(reply => {
+                    if (reply.data === "OK") {
+                        this.setCookie("viewKey", key, 10);
+                        this.setCookie("username", this.state.username, 10);
+                        submitted += " " + key;
+                        this.setCookie("submitted", submitted, 10);
+                    } else {
+                        alert("Name rejected, please submit again.");
+                    }
+
                     console.log(reply.data);
-                    this.setCookie("viewKey", key, 10);
-                    this.setCookie("username", this.state.username, 10);
-                    submitted += " " + key;
-                    this.setCookie("submitted", submitted, 10);
                 });
 
         };
